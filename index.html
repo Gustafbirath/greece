@@ -1,13 +1,636 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Our Greece Adventure 🇬🇷</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Greece Adventure 🇬🇷</title>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+
+    const { useState, useEffect } = React;
+    const { Heart, MapPin, Calendar, Star, ChevronDown, Utensils, Camera, X, Navigation, Phone, Clock, ChevronLeft, ChevronRight } = lucide;
+
+    // Custom hooks
+    const useScrollAnimation = () => {
+      const [scrollY, setScrollY] = useState(0);
+      useEffect(() => {
+        const handleScroll = () => setScrollY(window.scrollY);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }, []);
+      return scrollY;
+    };
+
+    const useIntersectionObserver = (options = {}) => {
+      const [isVisible, setIsVisible] = useState(false);
+      const [ref, setRef] = useState(null);
+
+      useEffect(() => {
+        if (!ref) return;
+        const observer = new IntersectionObserver(([entry]) => {
+          setIsVisible(entry.isIntersecting);
+        }, { threshold: 0.1, ...options });
+        observer.observe(ref);
+        return () => observer.disconnect();
+      }, [ref, options]);
+
+      return [setRef, isVisible];
+    };
+
+    // Gallery Modal
+    const GalleryModal = ({ isOpen, onClose, images, title }) => {
+      const [currentImage, setCurrentImage] = useState(0);
+
+      useEffect(() => {
+        document.body.style.overflow = isOpen ? 'hidden' : 'unset';
+        return () => { document.body.style.overflow = 'unset'; };
+      }, [isOpen]);
+
+      if (!isOpen) return null;
+
+      const nextImage = () => setCurrentImage((prev) => (prev + 1) % images.length);
+      const prevImage = () => setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
+
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
+          <div className="relative bg-white rounded-3xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
+            <button onClick={onClose} className="absolute top-4 right-4 z-10 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200">
+              <X size={20} className="text-gray-600" />
+            </button>
+
+            <div className="p-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">{title} Gallery</h2>
+
+              <div className="relative">
+                <img src={images[currentImage]?.url} alt={images[currentImage]?.caption} className="w-full h-96 object-cover rounded-2xl" />
+
+                {images.length > 1 && (
+                  <>
+                    <button onClick={prevImage} className="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200">
+                      <ChevronLeft size={20} className="text-gray-600" />
+                    </button>
+                    <button onClick={nextImage} className="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200">
+                      <ChevronRight size={20} className="text-gray-600" />
+                    </button>
+                  </>
+                )}
+
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+                  {currentImage + 1} / {images.length}
+                </div>
+              </div>
+
+              <p className="text-center text-gray-600 mt-4">{images[currentImage]?.caption}</p>
+
+              {images.length > 1 && (
+                <div className="flex justify-center gap-2 mt-6 overflow-x-auto pb-2">
+                  {images.map((image, index) => (
+                    <button key={index} onClick={() => setCurrentImage(index)} className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 ${index === currentImage ? 'border-blue-500' : 'border-gray-200 hover:border-gray-300'}`}>
+                      <img src={image.url} alt={image.caption} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // Map Modal
+    const Modal = ({ isOpen, onClose, children }) => {
+      useEffect(() => {
+        document.body.style.overflow = isOpen ? 'hidden' : 'unset';
+        return () => { document.body.style.overflow = 'unset'; };
+      }, [isOpen]);
+
+      if (!isOpen) return null;
+
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+          <div className="relative bg-white rounded-3xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <button onClick={onClose} className="absolute top-4 right-4 z-10 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200">
+              <X size={20} className="text-gray-600" />
+            </button>
+            {children}
+          </div>
+        </div>
+      );
+    };
+
+    // Map Component
+    const MapView = ({ location, name }) => (
+      <div className="w-full h-80 bg-gray-100 rounded-2xl overflow-hidden relative">
+        <iframe
+          src={`https://maps.google.com/maps?q=${encodeURIComponent(name + ', ' + location.address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+          width="100%" height="100%" style={{ border: 0 }} allowFullScreen="" loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade" className="rounded-2xl" title={`Map showing ${name}`}
+        />
+        <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg">
+          <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <MapPin size={16} className="text-blue-600" />
+            <span>{location.address}</span>
+          </div>
+        </div>
+      </div>
+    );
+
+    // Floating Icon
+    const FloatingIcon = ({ icon, delay = 0, className = '' }) => (
+      <div className={`absolute text-4xl text-white/60 pointer-events-none ${className}`} style={{ animation: `float 6s ease-in-out infinite`, animationDelay: `${delay}s` }}>
+        {icon}
+      </div>
+    );
+
+    // Card Component
+    const Card = ({ children, className = '', ...props }) => {
+      const [isHovered, setIsHovered] = useState(false);
+      return (
+        <div
+          className={`bg-white rounded-2xl p-6 shadow-lg transition-all duration-300 border border-blue-100 relative overflow-hidden group cursor-pointer ${isHovered ? 'transform -translate-y-2 scale-105 shadow-2xl shadow-blue-200/30' : ''} ${className}`}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          {...props}
+        >
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-600"></div>
+          {children}
+        </div>
+      );
+    };
+
+    // Button Component
+    const Button = ({ children, variant = 'primary', className = '', ...props }) => {
+      const baseClasses = "px-8 py-4 rounded-full font-semibold transition-all duration-300 inline-flex items-center gap-2";
+      const variants = {
+        primary: "bg-gradient-to-r from-pink-500 to-orange-400 text-white shadow-lg hover:shadow-xl hover:-translate-y-1",
+        secondary: "bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-white/30"
+      };
+      return <button className={`${baseClasses} ${variants[variant]} ${className}`} {...props}>{children}</button>;
+    };
+
+    // Navbar
+    const Navbar = () => {
+      const scrollY = useScrollAnimation();
+      const isVisible = scrollY > 300;
+      return (
+        <nav className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 backdrop-blur-md bg-white/95 transition-all duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
+          <div className="max-w-6xl mx-auto flex justify-between items-center">
+            <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">🇬🇷 Our Greece Adventure</div>
+            <div className="text-2xl">💕</div>
+          </div>
+        </nav>
+      );
+    };
+
+    // Hero Section
+    const Hero = () => {
+      const scrollY = useScrollAnimation();
+      const scrollToSection = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+
+      return (
+        <section className="relative h-screen flex items-center justify-center text-white overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-700 to-pink-600" style={{ transform: `translateY(${scrollY * 0.5}px)` }}>
+            <div className="absolute inset-0 opacity-30" style={{ backgroundImage: 'url("https://ionian-cruises.com/wp-content/uploads/2018/04/Corfu-Boat-Trips-1.jpg")', backgroundSize: 'cover', backgroundPosition: 'center' }} />
+          </div>
+
+          <div >
+            <FloatingIcon icon="💙" delay={0} className="top-1/4 left-1/4" />
+            <FloatingIcon icon="🌊" delay={2} className="top-3/5 left-3/4" />
+            <FloatingIcon icon="☀️" delay={4} className="top-1/3 right-1/4" />
+            <FloatingIcon icon="🏛️" delay={1} className="top-2/3 left-1/3" />
+          </div>
+
+          <div className="relative z-10 text-center max-w-4xl px-6">
+            <h1 className="text-6xl md:text-8xl font-black mb-6 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent fade-in-up">Our Greek Escape</h1>
+            <p className="text-xl md:text-2xl mb-8 opacity-90 fade-in-up-delay">A romantic journey through ancient wonders and azure seas</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center fade-in-up-delay-2">
+              <Button onClick={() => scrollToSection('restaurants')}><Utensils size={20} />Discover Our Adventure</Button>
+              <Button variant="secondary"><Calendar size={20} />Plan Your Visit</Button>
+            </div>
+          </div>
+
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <ChevronDown size={32} className="text-white/70" />
+          </div>
+
+          <div className="absolute bottom-0 left-0 right-0">
+            <svg viewBox="0 0 1200 120" className="w-full h-24 fill-white">
+              <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z" />
+            </svg>
+          </div>
+        </section>
+      );
+    };
+
+    // Section Header
+    const SectionHeader = ({ title, subtitle }) => {
+      const [ref, isVisible] = useIntersectionObserver();
+      return (
+        <div ref={ref} className={`text-center mb-12 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{title}</h2>
+          {subtitle && <p className="text-xl text-gray-600">{subtitle}</p>}
+        </div>
+      );
+    };
+
+    // Restaurant Card
+    const RestaurantCard = ({ emoji, name, description, rating = 5, delay = 0, location, hours, phone, priceRange, images = [] }) => {
+      const [ref, isVisible] = useIntersectionObserver();
+      const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+      const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
+
+      return (
+        <>
+          <div ref={ref} className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{ transitionDelay: `${delay}ms` }}>
+            <Card>
+              <div className="text-5xl mb-4">{emoji}</div>
+              <h3 className="text-2xl font-bold mb-3 text-gray-800">{name}</h3>
+              <div className="flex items-center mb-3">
+                {[...Array(rating)].map((_, i) => <Star key={i} size={18} className="text-yellow-400 fill-current" />)}
+                <span className="ml-2 text-gray-600">({rating}.0)</span>
+              </div>
+              <p className="text-gray-600 leading-relaxed mb-4">{description}</p>
+
+              <div className="flex gap-2">
+                <button onClick={() => setIsMapModalOpen(true)} className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                  <MapPin size={16} /><span className="text-sm">View Map</span>
+                </button>
+                <button onClick={() => setIsGalleryModalOpen(true)} className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-xl hover:bg-purple-700 transition-colors flex items-center justify-center gap-2">
+                  <Camera size={16} /><span className="text-sm">Photos</span>
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between mt-4">
+                <div className="text-sm font-semibold text-green-600">{priceRange}</div>
+                <div className="text-sm text-gray-500">{images.length} photos</div>
+              </div>
+            </Card>
+          </div>
+
+          <Modal isOpen={isMapModalOpen} onClose={() => setIsMapModalOpen(false)}>
+            <div className="p-8">
+              <div className="flex items-start gap-6 mb-6">
+                <div className="text-6xl">{emoji}</div>
+                <div className="flex-1">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">{name}</h2>
+                  <div className="flex items-center mb-4">
+                    {[...Array(rating)].map((_, i) => <Star key={i} size={20} className="text-yellow-400 fill-current" />)}
+                    <span className="ml-3 text-gray-600 text-lg">({rating}.0) • {priceRange}</span>
+                  </div>
+                  <p className="text-gray-700 leading-relaxed text-lg">{description}</p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="bg-gray-50 rounded-2xl p-6">
+                    <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                      <Clock size={20} className="text-blue-600" />Hours
+                    </h3>
+                    <div className="space-y-2 text-gray-700">
+                      {hours?.map((hour, idx) => (
+                        <div key={idx} className="flex justify-between">
+                          <span>{hour.day}</span><span>{hour.time}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 rounded-2xl p-6">
+                    <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                      <Phone size={20} className="text-blue-600" />Contact
+                    </h3>
+                    <p className="text-gray-700">{phone}</p>
+                    <button className="mt-2 text-blue-600 hover:text-blue-700 transition-colors">Call Restaurant</button>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <Navigation size={20} className="text-blue-600" />Location
+                  </h3>
+                  <MapView location={location} name={name} />
+                  <button className="mt-4 w-full bg-blue-600 text-white py-3 px-4 rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                    <Navigation size={16} />Get Directions
+                  </button>
+                </div>
+              </div>
+            </div>
+          </Modal>
+
+          <GalleryModal isOpen={isGalleryModalOpen} onClose={() => setIsGalleryModalOpen(false)} images={images} title={name} />
+        </>
+      );
+    };
+
+    // Activity Card
+    const ActivityCard = ({ emoji, name, description, type, delay = 0, location, duration, bestTime, images = [] }) => {
+      const [ref, isVisible] = useIntersectionObserver();
+      const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+      const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
+
+      return (
+        <>
+          <div ref={ref} className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{ transitionDelay: `${delay}ms` }}>
+            <Card>
+              <div className="text-5xl mb-4">{emoji}</div>
+              <div className="flex items-start justify-between mb-3">
+                <h3 className="text-2xl font-bold text-gray-800">{name}</h3>
+                <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">{type}</span>
+              </div>
+              <p className="text-gray-600 leading-relaxed mb-4">{description}</p>
+
+              <div className="flex gap-2 mb-4">
+                <button onClick={() => setIsMapModalOpen(true)} className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                  <MapPin size={16} /><span className="text-sm">View Map</span>
+                </button>
+                <button onClick={() => setIsGalleryModalOpen(true)} className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-xl hover:bg-purple-700 transition-colors flex items-center justify-center gap-2">
+                  <Camera size={16} /><span className="text-sm">Photos</span>
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-gray-500">{images.length} photos</div>
+                <Heart size={20} className="text-pink-400 hover:text-pink-500 cursor-pointer transition-colors" />
+              </div>
+            </Card>
+          </div>
+
+          <Modal isOpen={isMapModalOpen} onClose={() => setIsMapModalOpen(false)}>
+            <div className="p-8">
+              <div className="flex items-start gap-6 mb-6">
+                <div className="text-6xl">{emoji}</div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h2 className="text-3xl font-bold text-gray-900">{name}</h2>
+                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">{type}</span>
+                  </div>
+                  <p className="text-gray-700 leading-relaxed text-lg">{description}</p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="bg-gray-50 rounded-2xl p-6">
+                    <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                      <Clock size={20} className="text-blue-600" />Details
+                    </h3>
+                    <div className="space-y-3 text-gray-700">
+                      <div className="flex justify-between"><span>Duration:</span><span className="font-medium">{duration}</span></div>
+                      <div className="flex justify-between"><span>Best Time:</span><span className="font-medium">{bestTime}</span></div>
+                      <div className="flex justify-between"><span>Type:</span><span className="font-medium">{type}</span></div>
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-r from-pink-50 to-blue-50 rounded-2xl p-6">
+                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                      <Camera size={20} className="text-pink-600" />Photo Opportunities
+                    </h3>
+                    <p className="text-gray-700">Perfect for romantic photos and memorable moments together!</p>
+                    <button className="mt-3 text-pink-600 hover:text-pink-700 transition-colors flex items-center gap-1">
+                      <Heart size={16} />Add to favorites
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <Navigation size={20} className="text-blue-600" />Location
+                  </h3>
+                  <MapView location={location} name={name} />
+                  <button className="mt-4 w-full bg-blue-600 text-white py-3 px-4 rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                    <Navigation size={16} />Get Directions
+                  </button>
+                </div>
+              </div>
+            </div>
+          </Modal>
+
+          <GalleryModal isOpen={isGalleryModalOpen} onClose={() => setIsGalleryModalOpen(false)} images={images} title={name} />
+        </>
+      );
+    };
+
+    // Restaurants Section
+    const Restaurants = () => {
+      const restaurants = [
+        {
+          emoji: "🐙", name: "Taverna Ouzeri", rating: 5, priceRange: "€€€", phone: "+30 22860 71730",
+          description: "Authentic Greek seafood overlooking the Aegean Sea. Famous for their grilled octopus and fresh fish caught daily by local fishermen.",
+          location: { address: "Oia, Santorini, Greece" },
+          hours: [
+            { day: "Monday", time: "6:00 PM - 11:00 PM" }, { day: "Tuesday", time: "6:00 PM - 11:00 PM" },
+            { day: "Wednesday", time: "6:00 PM - 11:00 PM" }, { day: "Thursday", time: "6:00 PM - 11:00 PM" },
+            { day: "Friday", time: "6:00 PM - 12:00 AM" }, { day: "Saturday", time: "6:00 PM - 12:00 AM" },
+            { day: "Sunday", time: "6:00 PM - 11:00 PM" }
+          ],
+          images: [
+            { url: "https://images.unsplash.com/photo-1559339352-11d035aa65de?ixlib=rb-4.0.3", caption: "Fresh grilled octopus" },
+            { url: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3", caption: "Sunset terrace" },
+            { url: "https://images.unsplash.com/photo-1544510732-639d939667ac?ixlib=rb-4.0.3", caption: "Seafood platter" }
+          ]
+        },
+        {
+          emoji: "🥙", name: "Souvlaki Paradise", rating: 5, priceRange: "€€", phone: "+30 210 384 5978",
+          description: "The best souvlaki in Athens! Family-run taverna serving traditional Greek wraps for three generations.",
+          location: { address: "Plaka, Athens, Greece" },
+          hours: [
+            { day: "Monday", time: "12:00 PM - 11:00 PM" }, { day: "Tuesday", time: "12:00 PM - 11:00 PM" },
+            { day: "Wednesday", time: "12:00 PM - 11:00 PM" }, { day: "Thursday", time: "12:00 PM - 11:00 PM" },
+            { day: "Friday", time: "12:00 PM - 12:00 AM" }, { day: "Saturday", time: "12:00 PM - 12:00 AM" },
+            { day: "Sunday", time: "12:00 PM - 11:00 PM" }
+          ],
+          images: [
+            { url: "https://images.unsplash.com/photo-1601050690597-df0568f70950?ixlib=rb-4.0.3", caption: "Lamb souvlaki" },
+            { url: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3", caption: "Street food experience" },
+            { url: "https://images.unsplash.com/photo-1559847844-d721426d6edc?ixlib=rb-4.0.3", caption: "Taverna atmosphere" }
+          ]
+        },
+        {
+          emoji: "🧀", name: "Feta & Honey", rating: 4, priceRange: "€€€", phone: "+30 210 923 4567",
+          description: "Charming rooftop restaurant specializing in traditional Greek cheeses and local honey.",
+          location: { address: "Monastiraki, Athens, Greece" },
+          hours: [
+            { day: "Monday", time: "5:00 PM - 11:00 PM" }, { day: "Tuesday", time: "5:00 PM - 11:00 PM" },
+            { day: "Wednesday", time: "5:00 PM - 11:00 PM" }, { day: "Thursday", time: "5:00 PM - 11:00 PM" },
+            { day: "Friday", time: "5:00 PM - 12:00 AM" }, { day: "Saturday", time: "5:00 PM - 12:00 AM" },
+            { day: "Sunday", time: "5:00 PM - 11:00 PM" }
+          ],
+          images: [
+            { url: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3", caption: "Feta saganaki" },
+            { url: "https://images.unsplash.com/photo-1544510732-639d939667ac?ixlib=rb-4.0.3", caption: "Rooftop dining" },
+            { url: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3", caption: "Cheese selection" }
+          ]
+        },
+        {
+          emoji: "🍷", name: "Dionysus Wine Bar", rating: 5, priceRange: "€€€€", phone: "+30 210 923 1234",
+          description: "Romantic wine bar with extensive Greek wine collection and Acropolis views.",
+          location: { address: "Acropolis area, Athens, Greece" },
+          hours: [
+            { day: "Monday", time: "Closed" }, { day: "Tuesday", time: "6:00 PM - 1:00 AM" },
+            { day: "Wednesday", time: "6:00 PM - 1:00 AM" }, { day: "Thursday", time: "6:00 PM - 1:00 AM" },
+            { day: "Friday", time: "6:00 PM - 2:00 AM" }, { day: "Saturday", time: "6:00 PM - 2:00 AM" },
+            { day: "Sunday", time: "6:00 PM - 1:00 AM" }
+          ],
+          images: [
+            { url: "https://images.unsplash.com/photo-1574870111867-089730e5a72b?ixlib=rb-4.0.3", caption: "Wine collection" },
+            { url: "https://images.unsplash.com/photo-1544510732-639d939667ac?ixlib=rb-4.0.3", caption: "Mezze platter" }
+          ]
+        }
+      ];
+
+      return (
+        <section id="restaurants" className="py-20 px-6 max-w-6xl mx-auto relative">
+          <div className="absolute inset-0 opacity-10 rounded-3xl" style={{
+            backgroundImage: 'url("https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80")',
+            backgroundSize: 'cover', backgroundPosition: 'center', zIndex: -1
+          }} />
+          <SectionHeader title="🍽️ Culinary Delights" subtitle="Taste the authentic flavors of Greece together" />
+          <div className="grid md:grid-cols-2 gap-8">
+            {restaurants.map((restaurant, index) => (
+              <RestaurantCard key={restaurant.name} {...restaurant} delay={index * 150} />
+            ))}
+          </div>
+        </section>
+      );
+    };
+
+    // Activities Section
+    const Activities = () => {
+      const activities = [
+        {
+          emoji: "🏛️", name: "Acropolis & Parthenon", type: "Historical", duration: "3-4 hours", bestTime: "Early morning",
+          description: "Step back in time at Athens' crown jewel. Explore the ancient citadel at sunrise.",
+          location: { address: "Acropolis, Athens, Greece" },
+          images: [
+            { url: "https://images.unsplash.com/photo-1555993539-1732b0258077?ixlib=rb-4.0.3", caption: "Parthenon at golden hour" },
+            { url: "https://images.unsplash.com/photo-1603565816030-6b389eeb23cb?ixlib=rb-4.0.3", caption: "Ancient columns" },
+            { url: "https://images.unsplash.com/photo-1539650116574-75c0c6d73c6e?ixlib=rb-4.0.3", caption: "Athens panorama" }
+          ]
+        },
+        {
+          emoji: "🌅", name: "Santorini Sunset", type: "Romantic", duration: "2-3 hours", bestTime: "Evening",
+          description: "The world's most romantic sunset in Oia with stunning Aegean Sea views.",
+          location: { address: "Oia, Santorini, Greece" },
+          images: [
+            { url: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?ixlib=rb-4.0.3", caption: "Santorini sunset" },
+            { url: "https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?ixlib=rb-4.0.3", caption: "Blue domes" },
+            { url: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?ixlib=rb-4.0.3", caption: "Romantic moment" }
+          ]
+        },
+        {
+          emoji: "🚤", name: "Island Hopping", type: "Adventure", duration: "Full day", bestTime: "Morning departure",
+          description: "Private boat tour through the Cyclades islands with hidden coves.",
+          location: { address: "Mykonos Port, Greece" },
+          images: [
+            { url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3", caption: "Private yacht" },
+            { url: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3", caption: "Hidden cove" },
+            { url: "https://images.unsplash.com/photo-1555993539-1732b0258077?ixlib=rb-4.0.3", caption: "Fishing village" }
+          ]
+        },
+        {
+          emoji: "🏖️", name: "Beach Days in Mykonos", type: "Relaxation", duration: "Half day", bestTime: "Afternoon",
+          description: "Relaxing on pristine beaches from vibrant clubs to secluded spots.",
+          location: { address: "Paradise Beach, Mykonos, Greece" },
+          images: [
+            { url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3", caption: "Paradise Beach" },
+            { url: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3", caption: "Beach club" },
+            { url: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?ixlib=rb-4.0.3", caption: "Romantic spot" }
+          ]
+        },
+        {
+          emoji: "🎭", name: "Ancient Theater Experience", type: "Cultural", duration: "4-5 hours", bestTime: "Evening",
+          description: "Watch performances at the ancient theater of Epidaurus under the stars.",
+          location: { address: "Epidaurus, Greece" },
+          images: [
+            { url: "https://images.unsplash.com/photo-1578321272176-b7bbc0679853?ixlib=rb-4.0.3", caption: "Ancient theater" },
+            { url: "https://images.unsplash.com/photo-1539650116574-75c0c6d73c6e?ixlib=rb-4.0.3", caption: "Performance" },
+            { url: "https://images.unsplash.com/photo-1555993539-1732b0258077?ixlib=rb-4.0.3", caption: "Starlit evening" }
+          ]
+        },
+        {
+          emoji: "🛥️", name: "Romantic Sailing", type: "Romantic", duration: "Full day", bestTime: "Morning",
+          description: "Private sailing trip around Greek islands with fresh seafood onboard.",
+          location: { address: "Paros Marina, Greece" },
+          images: [
+            { url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3", caption: "Sailing yacht" },
+            { url: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3", caption: "Couple sailing" },
+            { url: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?ixlib=rb-4.0.3", caption: "Sunset sailing" }
+          ]
+        }
+      ];
+
+      return (
+        <section id="activities" className="py-20 px-6 max-w-6xl mx-auto relative">
+          <div className="absolute inset-0 opacity-8 rounded-3xl" style={{
+            backgroundImage: 'url("https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80")',
+            backgroundSize: 'cover', backgroundPosition: 'center', zIndex: -1
+          }} />
+          <SectionHeader title="🏛️ Adventures Await" subtitle="Create unforgettable memories together" />
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {activities.map((activity, index) => (
+              <ActivityCard key={activity.name} {...activity} delay={index * 100} />
+            ))}
+          </div>
+        </section>
+      );
+    };
+
+    // Footer
+    const Footer = () => (
+      <footer className="bg-gradient-to-r from-blue-900 to-purple-900 text-white py-16 px-6">
+        <div className="max-w-6xl mx-auto text-center">
+          <h3 className="text-3xl font-bold mb-4">Ready for Our Greek Adventure?</h3>
+          <p className="text-xl mb-8 opacity-90">Let's make memories that will last a lifetime</p>
+          <div className="flex justify-center items-center gap-4 text-4xl mb-8">
+            <span>🇬🇷</span>
+            <Heart className="text-pink-400 animate-pulse" size={32} />
+            <span>💑</span>
+          </div>
+          <p className="opacity-70">Made with ❤️ for our Greek getaway</p>
+        </div>
+      </footer>
+    );
+
+    // Main App
+    const App = () => {
+      useEffect(() => {
+        const style = document.createElement('style');
+        style.textContent = `
+      @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        33% { transform: translateY(-20px) rotate(5deg); }
+        66% { transform: translateY(-10px) rotate(-5deg); }
+      }
+      @keyframes fade-in-up {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .fade-in-up { animation: fade-in-up 1s ease-out; }
+      .fade-in-up-delay { animation: fade-in-up 1s ease-out 0.3s both; }
+      .fade-in-up-delay-2 { animation: fade-in-up 1s ease-out 0.6s both; }
+    `;
+        document.head.appendChild(style);
+        return () => document.head.removeChild(style);
+      }, []);
+
+      return (
+        <div className="min-h-screen bg-gray-50">
+          <Navbar />
+          <Hero />
+          <Restaurants />
+          <Activities />
+          <Footer />
+        </div>
+      );
+    };
+
+    export default App;
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+
 </html>
