@@ -138,6 +138,7 @@
             border: 1px solid rgba(102, 126, 234, 0.1);
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .card::before {
@@ -237,6 +238,112 @@
             fill: #FFFFFF;
         }
 
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            opacity: 1;
+            align-items: center;
+            justify-content: center;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 25px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 1.5rem;
+        }
+
+        .modal-emoji {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .modal-title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            font-style: italic;
+        }
+
+        .modal-body {
+            line-height: 1.8;
+            color: #555;
+            font-size: 1.1rem;
+        }
+
+        .modal-details {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: #f0f0f0;
+            color: #333;
+            transform: scale(1.1);
+        }
+
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -254,6 +361,17 @@
             66% { transform: translateY(-10px) rotate(-5deg); }
         }
 
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 2.5rem;
@@ -269,6 +387,15 @@
             
             .section {
                 padding: 3rem 1rem;
+            }
+
+            .modal-content {
+                padding: 2rem;
+                width: 95%;
+            }
+
+            .modal-title {
+                font-size: 2rem;
             }
         }
     </style>
@@ -363,7 +490,142 @@
         </div>
     </section>
 
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div class="modal-header">
+                <span class="modal-emoji" id="modal-emoji">🐙</span>
+                <h3 class="modal-title" id="modal-title">Title</h3>
+                <p class="modal-subtitle" id="modal-subtitle">Subtitle</p>
+            </div>
+            <div class="modal-body">
+                <p id="modal-description">Description</p>
+                <div class="modal-details" id="modal-details">
+                    <p id="modal-extra">Extra details</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Modal data
+        const modalData = {
+            'Taverna Ouzeri': {
+                emoji: '🐙',
+                title: 'Taverna Ouzeri',
+                subtitle: 'Authentic Seaside Dining Experience',
+                description: 'Authentic Greek seafood overlooking the Aegean Sea. Famous for their grilled octopus and fresh fish caught daily by local fishermen. The sunset views from their terrace are absolutely magical.',
+                details: '📍 Located on the waterfront of Paros island<br>🕐 Open daily 6 PM - 1 AM<br>💰 €25-40 per person<br>🍷 Extensive wine list featuring local varieties<br>📞 Reservations recommended for sunset tables'
+            },
+            'Souvlaki Paradise': {
+                emoji: '🥙',
+                title: 'Souvlaki Paradise',
+                subtitle: 'Three Generations of Authentic Flavors',
+                description: 'The best souvlaki in Athens! This family-run taverna has been serving traditional Greek wraps for three generations. Don\'t miss their lamb souvlaki with tzatziki and warm pita.',
+                details: '📍 Psyrri neighborhood, Athens<br>🕐 Open daily 12 PM - 11 PM<br>💰 €8-15 per person<br>🥩 Fresh meat grilled over charcoal<br>👨‍👩‍👧‍👦 Family recipe passed down since 1952'
+            },
+            'Feta & Honey': {
+                emoji: '🧀',
+                title: 'Feta & Honey',
+                subtitle: 'Rooftop Cheese & Wine Paradise',
+                description: 'A charming rooftop restaurant specializing in traditional Greek cheeses and local honey. Their feta saganaki with thyme honey is a must-try, paired with local wine.',
+                details: '📍 Rooftop terrace in Plaka, Athens<br>🕐 Open daily 7 PM - 2 AM<br>💰 €20-35 per person<br>🧀 Over 15 varieties of Greek cheese<br>🍯 Honey sourced from local beekeepers'
+            },
+            'Dionysus Wine Bar': {
+                emoji: '🍷',
+                title: 'Dionysus Wine Bar',
+                subtitle: 'Romance with a View of the Acropolis',
+                description: 'Romantic wine bar with an extensive collection of Greek wines. Perfect for our evening dates with views of the Acropolis. Their wine tastings paired with mezze platters are incredible.',
+                details: '📍 Rooftop with Acropolis views<br>🕐 Open daily 6 PM - 2 AM<br>💰 €30-50 per person<br>🍷 200+ Greek wines from all regions<br>🧀 Curated mezze platters with each wine flight'
+            },
+            'Acropolis & Parthenon': {
+                emoji: '🏛️',
+                title: 'Acropolis & Parthenon',
+                subtitle: 'Ancient Wonder at Sunrise',
+                description: 'Step back in time at Athens\' crown jewel. We\'ll explore the ancient citadel at sunrise to avoid crowds and capture the golden hour magic. The history and views are breathtaking.',
+                details: '📍 Acropolis Hill, Athens<br>🕐 Opens at 8 AM (arrive early!)<br>💰 €20 entrance fee<br>📸 Best photography light at sunrise<br>🚶‍♀️ Wear comfortable shoes for marble steps'
+            },
+            'Santorini Sunset': {
+                emoji: '🌅',
+                title: 'Santorini Sunset',
+                subtitle: 'World\'s Most Romantic Sunset',
+                description: 'The world\'s most romantic sunset in Oia. We\'ll find the perfect spot to watch the sun dip into the Aegean Sea, painting the white buildings in shades of gold and pink.',
+                details: '📍 Oia village, Santorini<br>🕐 Best viewing 7:30-8:30 PM<br>💰 Free to watch from public areas<br>📸 Arrive 1 hour early for best spots<br>🍷 Nearby cafes for sunset drinks'
+            },
+            'Island Hopping': {
+                emoji: '🚤',
+                title: 'Island Hopping',
+                subtitle: 'Private Cyclades Adventure',
+                description: 'Private boat tour through the Cyclades islands. We\'ll discover hidden coves, swim in crystal-clear waters, and explore charming fishing villages accessible only by sea.',
+                details: '📍 Departs from Paros or Naxos<br>🕐 Full day trips 9 AM - 6 PM<br>💰 €150-200 per person<br>🏊‍♀️ Swimming stops at secluded beaches<br>🍽️ Fresh seafood lunch included'
+            },
+            'Beach Days in Mykonos': {
+                emoji: '🏖️',
+                title: 'Beach Days in Mykonos',
+                subtitle: 'Paradise Found',
+                description: 'Relaxing on the pristine beaches of Mykonos. From the vibrant beach clubs to secluded romantic spots, we\'ll find our perfect slice of paradise.',
+                details: '📍 Paradise Beach & Psarou Beach<br>🕐 Beach clubs open 10 AM - sunset<br>💰 €20-40 for beach beds<br>🍹 Signature cocktails and fresh seafood<br>🎵 Chill music and crystal-clear waters'
+            },
+            'Ancient Theater Experience': {
+                emoji: '🎭',
+                title: 'Ancient Theater Experience',
+                subtitle: 'Performance Under the Stars',
+                description: 'Watch a performance at the ancient theater of Epidaurus, famous for its perfect acoustics. An unforgettable cultural experience under the Greek stars.',
+                details: '📍 Epidaurus, 2 hours from Athens<br>🕐 Performances start at 9 PM<br>💰 €15-40 per ticket<br>🎭 Classical plays in original setting<br>🌟 Perfect acoustics - whisper from stage heard in back row'
+            },
+            'Romantic Sailing': {
+                emoji: '🛥️',
+                title: 'Romantic Sailing',
+                subtitle: 'Private Sailing Adventure',
+                description: 'Private sailing trip around the Greek islands. We\'ll learn to sail together, enjoy fresh seafood onboard, and anchor in secluded bays for swimming and snorkeling.',
+                details: '📍 Departs from various marinas<br>🕐 Half-day or full-day options<br>💰 €300-500 for private boat<br>⛵ Learn basic sailing techniques<br>🐠 Snorkeling equipment provided'
+            }
+        };
+
+        // Modal functions
+        function openModal(title) {
+            const modal = document.getElementById('modal');
+            const data = modalData[title];
+            
+            if (data) {
+                document.getElementById('modal-emoji').textContent = data.emoji;
+                document.getElementById('modal-title').textContent = data.title;
+                document.getElementById('modal-subtitle').textContent = data.subtitle;
+                document.getElementById('modal-description').textContent = data.description;
+                document.getElementById('modal-extra').innerHTML = data.details;
+                
+                modal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Add click events to all cards
+        document.querySelectorAll('.card').forEach(card => {
+            const title = card.querySelector('h3').textContent;
+            card.addEventListener('click', () => openModal(title));
+        });
+
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
