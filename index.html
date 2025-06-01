@@ -1,4 +1,203 @@
-<!DOCTYPE html>
+// Modal data
+        const modalData = {
+            'Taverna Ouzeri': {
+                emoji: '🐙',
+                title: 'Taverna Ouzeri',
+                subtitle: 'Authentic Seaside Dining Experience',
+                description: 'Authentic Greek seafood overlooking the Aegean Sea. Famous for their grilled octopus and fresh fish caught daily by local fishermen. The sunset views from their terrace are absolutely magical.',
+                details: '📍 Located on the waterfront of Paros island<br>🕐 Open daily 6 PM - 1 AM<br>💰 €25-40 per person<br>🍷 Extensive wine list featuring local varieties<br>📞 Reservations recommended for sunset tables',
+                mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3169.123!2d25.148!3d37.0853!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDA1JzA3LjEiTiAyNcKwMDgnNTIuOCJF!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',
+                directionsUrl: 'https://maps.google.com/maps?daddr=Paros,Greece',
+                bookingUrl: 'https://www.greek-sailing.com/private-tours',
+                type: 'activity'
+            }
+        };
+
+        // Modal functions
+        function openModal(title) {
+            const modal = document.getElementById('modal');
+            const data = modalData[title];
+            
+            if (data) {
+                document.getElementById('modal-emoji').textContent = data.emoji;
+                document.getElementById('modal-title').textContent = data.title;
+                document.getElementById('modal-subtitle').textContent = data.subtitle;
+                document.getElementById('modal-description').textContent = data.description;
+                document.getElementById('modal-extra').innerHTML = data.details;
+                
+                // Show map
+                const mapElement = document.getElementById('modal-map');
+                mapElement.src = data.mapSrc;
+                mapElement.style.display = 'block';
+                
+                // Create action buttons
+                const actionsContainer = document.getElementById('modal-actions');
+                actionsContainer.innerHTML = '';
+                
+                // Add menu button for restaurants
+                if (data.type === 'restaurant' && data.menuUrl) {
+                    const menuButton = document.createElement('a');
+                    menuButton.href = data.menuUrl;
+                    menuButton.target = '_blank';
+                    menuButton.className = 'modal-button menu-button';
+                    menuButton.innerHTML = '📋 View Menu';
+                    actionsContainer.appendChild(menuButton);
+                }
+                
+                // Add booking button for activities
+                if (data.type === 'activity' && data.bookingUrl) {
+                    const bookingButton = document.createElement('a');
+                    bookingButton.href = data.bookingUrl;
+                    bookingButton.target = '_blank';
+                    bookingButton.className = 'modal-button';
+                    bookingButton.innerHTML = '🎫 Book Now';
+                    actionsContainer.appendChild(bookingButton);
+                }
+                
+                // Add directions button for all
+                if (data.directionsUrl) {
+                    const directionsButton = document.createElement('a');
+                    directionsButton.href = data.directionsUrl;
+                    directionsButton.target = '_blank';
+                    directionsButton.className = 'modal-button directions-button';
+                    directionsButton.innerHTML = '🧭 Get Directions';
+                    actionsContainer.appendChild(directionsButton);
+                }
+                
+                modal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+            
+            // Clear map to stop loading
+            const mapElement = document.getElementById('modal-map');
+            mapElement.src = '';
+            mapElement.style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Add click events to all cards
+        document.querySelectorAll('.card').forEach(card => {
+            const title = card.querySelector('h3').textContent;
+            card.addEventListener('click', () => openModal(title));
+        });
+                menuUrl: 'https://www.example-taverna-ouzeri.gr/menu',
+                directionsUrl: 'https://maps.google.com/maps?daddr=37.0853,25.148',
+                type: 'restaurant'
+            },
+            'Souvlaki Paradise': {
+                emoji: '🥙',
+                title: 'Souvlaki Paradise',
+                subtitle: 'Three Generations of Authentic Flavors',
+                description: 'The best souvlaki in Athens! This family-run taverna has been serving traditional Greek wraps for three generations. Don\'t miss their lamb souvlaki with tzatziki and warm pita.',
+                details: '📍 Psyrri neighborhood, Athens<br>🕐 Open daily 12 PM - 11 PM<br>💰 €8-15 per person<br>🥩 Fresh meat grilled over charcoal<br>👨‍👩‍👧‍👦 Family recipe passed down since 1952',
+                mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3145.678!2d23.7348!3d37.9755!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDU4JzMxLjgiTiAyM8KwNDQnMDUuMyJF!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',
+                menuUrl: 'https://www.example-souvlaki-paradise.gr/menu',
+                directionsUrl: 'https://maps.google.com/maps?daddr=37.9755,23.7348',
+                type: 'restaurant'
+            },
+            'Feta & Honey': {
+                emoji: '🧀',
+                title: 'Feta & Honey',
+                subtitle: 'Rooftop Cheese & Wine Paradise',
+                description: 'A charming rooftop restaurant specializing in traditional Greek cheeses and local honey. Their feta saganaki with thyme honey is a must-try, paired with local wine.',
+                details: '📍 Rooftop terrace in Plaka, Athens<br>🕐 Open daily 7 PM - 2 AM<br>💰 €20-35 per person<br>🧀 Over 15 varieties of Greek cheese<br>🍯 Honey sourced from local beekeepers',
+                mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3145.234!2d23.7275!3d37.9723!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDU4JzIwLjMiTiAyM8KwNDMnMzkuMCJF!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',
+                menuUrl: 'https://www.example-feta-honey.gr/menu',
+                directionsUrl: 'https://maps.google.com/maps?daddr=37.9723,23.7275',
+                type: 'restaurant'
+            },
+            'Dionysus Wine Bar': {
+                emoji: '🍷',
+                title: 'Dionysus Wine Bar',
+                subtitle: 'Romance with a View of the Acropolis',
+                description: 'Romantic wine bar with an extensive collection of Greek wines. Perfect for our evening dates with views of the Acropolis. Their wine tastings paired with mezze platters are incredible.',
+                details: '📍 Rooftop with Acropolis views<br>🕐 Open daily 6 PM - 2 AM<br>💰 €30-50 per person<br>🍷 200+ Greek wines from all regions<br>🧀 Curated mezze platters with each wine flight',
+                mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3145.456!2d23.7291!3d37.9741!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDU4JzI2LjgiTiAyM8KwNDMnNDQuOCJF!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',
+                menuUrl: 'https://www.example-dionysus-wine.gr/menu',
+                directionsUrl: 'https://maps.google.com/maps?daddr=37.9741,23.7291',
+                type: 'restaurant'
+            },
+            'Acropolis & Parthenon': {
+                emoji: '🏛️',
+                title: 'Acropolis & Parthenon',
+                subtitle: 'Ancient Wonder at Sunrise',
+                description: 'Step back in time at Athens\' crown jewel. We\'ll explore the ancient citadel at sunrise to avoid crowds and capture the golden hour magic. The history and views are breathtaking.',
+                details: '📍 Acropolis Hill, Athens<br>🕐 Opens at 8 AM (arrive early!)<br>💰 €20 entrance fee<br>📸 Best photography light at sunrise<br>🚶‍♀️ Wear comfortable shoes for marble steps',
+                mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3145.789!2d23.7275!3d37.9715!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14a1bd1f067043f1%3A0x2736354576668ddd!2sAcropolis%20of%20Athens!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',
+                directionsUrl: 'https://maps.google.com/maps?daddr=Acropolis,Athens,Greece',
+                bookingUrl: 'https://www.ticketmaster.gr/acropolis',
+                type: 'activity'
+            },
+            'Santorini Sunset': {
+                emoji: '🌅',
+                title: 'Santorini Sunset',
+                subtitle: 'World\'s Most Romantic Sunset',
+                description: 'The world\'s most romantic sunset in Oia. We\'ll find the perfect spot to watch the sun dip into the Aegean Sea, painting the white buildings in shades of gold and pink.',
+                details: '📍 Oia village, Santorini<br>🕐 Best viewing 7:30-8:30 PM<br>💰 Free to watch from public areas<br>📸 Arrive 1 hour early for best spots<br>🍷 Nearby cafes for sunset drinks',
+                mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3194.567!2d25.3748!3d36.4618!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1499ce86adfd9ff7%3A0xb2a761f740d68afc!2sOia%2C%20Santorini!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',
+                directionsUrl: 'https://maps.google.com/maps?daddr=Oia,Santorini,Greece',
+                bookingUrl: 'https://www.santorini-tours.com/sunset',
+                type: 'activity'
+            },
+            'Island Hopping': {
+                emoji: '🚤',
+                title: 'Island Hopping',
+                subtitle: 'Private Cyclades Adventure',
+                description: 'Private boat tour through the Cyclades islands. We\'ll discover hidden coves, swim in crystal-clear waters, and explore charming fishing villages accessible only by sea.',
+                details: '📍 Departs from Paros or Naxos<br>🕐 Full day trips 9 AM - 6 PM<br>💰 €150-200 per person<br>🏊‍♀️ Swimming stops at secluded beaches<br>🍽️ Fresh seafood lunch included',
+                mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3169.123!2d25.148!3d37.0853!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDA1JzA3LjEiTiAyNcKwMDgnNTIuOCJF!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',
+                directionsUrl: 'https://maps.google.com/maps?daddr=Paros,Greece',
+                bookingUrl: 'https://www.cyclades-sailing.com/book',
+                type: 'activity'
+            },
+            'Beach Days in Mykonos': {
+                emoji: '🏖️',
+                title: 'Beach Days in Mykonos',
+                subtitle: 'Paradise Found',
+                description: 'Relaxing on the pristine beaches of Mykonos. From the vibrant beach clubs to secluded romantic spots, we\'ll find our perfect slice of paradise.',
+                details: '📍 Paradise Beach & Psarou Beach<br>🕐 Beach clubs open 10 AM - sunset<br>💰 €20-40 for beach beds<br>🍹 Signature cocktails and fresh seafood<br>🎵 Chill music and crystal-clear waters',
+                mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3182.456!2d25.3289!3d37.4467!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14a2baa179b15227%3A0x21c7bc0b5296affc!2sMykonos!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',
+                directionsUrl: 'https://maps.google.com/maps?daddr=Mykonos,Greece',
+                bookingUrl: 'https://www.mykonos-beaches.com/reserve',
+                type: 'activity'
+            },
+            'Ancient Theater Experience': {
+                emoji: '🎭',
+                title: 'Ancient Theater Experience',
+                subtitle: 'Performance Under the Stars',
+                description: 'Watch a performance at the ancient theater of Epidaurus, famous for its perfect acoustics. An unforgettable cultural experience under the Greek stars.',
+                details: '📍 Epidaurus, 2 hours from Athens<br>🕐 Performances start at 9 PM<br>💰 €15-40 per ticket<br>🎭 Classical plays in original setting<br>🌟 Perfect acoustics - whisper from stage heard in back row',
+                mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3156.789!2d23.0792!3d37.5963!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x149ffd5cb7f8a2f5%3A0x3c7c99a10f8c2e3a!2sAncient%20Theatre%20of%20Epidaurus!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',
+                directionsUrl: 'https://maps.google.com/maps?daddr=Ancient Theatre of Epidaurus,Greece',
+                bookingUrl: 'https://www.greekfestival.gr/epidaurus',
+                type: 'activity'
+            },
+            'Romantic Sailing': {
+                emoji: '🛥️',
+                title: 'Romantic Sailing',
+                subtitle: 'Private Sailing Adventure',
+                description: 'Private sailing trip around the Greek islands. We\'ll learn to sail together, enjoy fresh seafood onboard, and anchor in secluded bays for swimming and snorkeling.',
+                details: '📍 Departs from various marinas<br>🕐 Half-day or full-day options<br>💰 €300-500 for private boat<br>⛵ Learn basic sailing techniques<br>🐠 Snorkeling equipment provided',
+                mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3169.123!2d25.148!3d37.0853!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDA1JzA3LjEiTiAyNcKwMDgnNTIuOCJF!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -344,6 +543,66 @@
             transform: scale(1.1);
         }
 
+        .modal-map {
+            width: 100%;
+            height: 300px;
+            border-radius: 15px;
+            border: none;
+            margin: 1.5rem 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .modal-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+
+        .modal-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(45deg, #5a6fd8, #6a5acd);
+        }
+
+        .modal-button.menu-button {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .modal-button.menu-button:hover {
+            background: linear-gradient(45deg, #ff5252, #ffb74d);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .modal-button.directions-button {
+            background: linear-gradient(45deg, #26a69a, #4db6ac);
+            box-shadow: 0 4px 15px rgba(38, 166, 154, 0.3);
+        }
+
+        .modal-button.directions-button:hover {
+            background: linear-gradient(45deg, #00897b, #26a69a);
+            box-shadow: 0 8px 25px rgba(38, 166, 154, 0.4);
+        }
+
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -504,6 +763,10 @@
                 <div class="modal-details" id="modal-details">
                     <p id="modal-extra">Extra details</p>
                 </div>
+                <iframe id="modal-map" class="modal-map" style="display: none;"></iframe>
+                <div class="modal-actions" id="modal-actions">
+                    <!-- Action buttons will be inserted here -->
+                </div>
             </div>
         </div>
     </div>
@@ -620,10 +883,16 @@
             }
         });
 
-        // Add click events to all cards
+        // Add click events to all cards (but prevent modal opening when clicking menu links)
         document.querySelectorAll('.card').forEach(card => {
             const title = card.querySelector('h3').textContent;
-            card.addEventListener('click', () => openModal(title));
+            card.addEventListener('click', (e) => {
+                // Don't open modal if clicking on menu link
+                if (e.target.closest('.menu-link')) {
+                    return;
+                }
+                openModal(title);
+            });
         });
 
         // Smooth scrolling for anchor links
@@ -654,8 +923,8 @@
             });
         }, observerOptions);
 
-        // Observe all sections
-        document.querySelectorAll('.section').forEach(section => {
+        // Observe all sections (including map section)
+        document.querySelectorAll('.section, .map-section').forEach(section => {
             observer.observe(section);
         });
 
