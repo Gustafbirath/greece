@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Greece Adventure 🇬🇷</title>
+    <title>Vårt Grekiska äventyr! 🇬🇷</title>
     <style>
         * {
             margin: 0;
@@ -37,7 +37,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover;
+            background: url('https://ionian-cruises.com/wp-content/uploads/2018/04/Corfu-Boat-Trips-1.jpg') center/cover;
             opacity: 0.3;
             z-index: 1;
         }
@@ -87,6 +87,8 @@
         .floating-elements {
             position: absolute;
             width: 100%;
+            z-index: 9999999;
+            opacity: 1;
             height: 100%;
             pointer-events: none;
         }
@@ -250,28 +252,31 @@
             z-index: 2000;
             opacity: 0;
             transition: all 0.3s ease;
+            padding: 2rem;
+            overflow-y: auto;
         }
 
         .modal.show {
             display: flex;
             opacity: 1;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             animation: modalFadeIn 0.3s ease;
+            padding-top: 3rem;
+            padding-bottom: 3rem;
         }
 
         .modal-content {
             background: white;
             border-radius: 25px;
-            padding: 3rem;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
+            padding: 2.5rem;
+            max-width: 900px;
+            width: 100%;
             position: relative;
             transform: scale(0.8);
             transition: all 0.3s ease;
             box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+            margin: auto;
         }
 
         .modal.show .modal-content {
@@ -302,7 +307,7 @@
 
         .modal-subtitle {
             color: #666;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-style: italic;
         }
 
@@ -310,6 +315,36 @@
             line-height: 1.8;
             color: #555;
             font-size: 1.1rem;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin: 1.5rem 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .modal-image-gallery img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-image-gallery img:hover {
+            transform: scale(1.05);
         }
 
         .modal-details {
@@ -346,7 +381,7 @@
 
         .modal-map {
             width: 100%;
-            height: 300px;
+            height: 350px;
             border-radius: 15px;
             border: none;
             margin: 1.5rem 0;
@@ -449,13 +484,37 @@
                 padding: 3rem 1rem;
             }
 
+            .modal {
+                padding: 1rem;
+                overflow-y: auto;
+            }
+
+            .modal.show {
+                align-items: flex-start;
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+            }
+
             .modal-content {
                 padding: 2rem;
-                width: 95%;
+                width: 100%;
+                margin: auto;
             }
 
             .modal-title {
                 font-size: 2rem;
+            }
+
+            .modal-map {
+                height: 250px;
+            }
+
+            .modal-image {
+                height: 200px;
+            }
+
+            .modal-image-gallery img {
+                height: 120px;
             }
         }
     </style>
@@ -463,8 +522,7 @@
 <body>
     <nav class="navbar" id="navbar">
         <div class="navbar-content">
-            <div class="logo">🇬🇷 Our Greece Adventure</div>
-            <div>💕</div>
+            <div class="logo">Vårt Grekiska äventyr 💕</div>
         </div>
     </nav>
 
@@ -477,9 +535,9 @@
             <div class="floating-heart" style="top: 70%; left: 20%; animation-delay: 1s;">🏛️</div>
         </div>
         <div class="hero-content">
-            <h1>Our Greek Escape</h1>
-            <p>A romantic journey through ancient wonders and azure seas</p>
-            <a href="#restaurants" class="cta-button">Discover Our Adventure</a>
+            <h1>Sivota</h1>
+            <p>Ännu en romantisk resa till vår favoritdestination, Grekland! 💕</p>
+            <a href="#restaurants" class="cta-button">Få en försmak av Sivota</a>
         </div>
         <div class="wave">
             <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
@@ -489,27 +547,32 @@
     </section>
 
     <section class="section" id="restaurants">
-        <h2>🍽️ Culinary Delights</h2>
+        <h2>🍽️ Den fantastiska grekiska maten</h2>
         <div class="grid">
             <div class="card">
                 <span class="emoji">🐙</span>
-                <h3>Taverna Ouzeri</h3>
-                <p>Authentic Greek seafood overlooking the Aegean Sea. Famous for their grilled octopus and fresh fish caught daily by local fishermen. The sunset views from their terrace are absolutely magical.</p>
+                <h3>Vibes All Day Dining Experience</h3>
+                <p>Belägen vid norra sidan av hamnen hittar vi denna pärla med "vibes all day" där maten ser ut som på en michelinkrog av högsta rang!</p>
             </div>
             <div class="card">
-                <span class="emoji">🥙</span>
-                <h3>Souvlaki Paradise</h3>
-                <p>The best souvlaki in Athens! This family-run taverna has been serving traditional Greek wraps for three generations. Don't miss their lamb souvlaki with tzatziki and warm pita.</p>
+                <span class="emoji">🥐</span>
+                <h3>Sivota Bakery</h3>
+                <p>Detta otroligt mysiga café ligger vid västra delen av hamnen, här kan en nybakt croissant avnjutas med en oslagbar utsikt över marinan och inloppet.</p>
             </div>
             <div class="card">
-                <span class="emoji">🧀</span>
-                <h3>Feta & Honey</h3>
-                <p>A charming rooftop restaurant specializing in traditional Greek cheeses and local honey. Their feta saganaki with thyme honey is a must-try, paired with local wine.</p>
+                <span class="emoji">🦐</span>
+                <h3>Ionion Taverna</h3>
+                <p>Ännu en spännande restaurang vid den pittoreska hamnen! Den här restaurangen har fått väldigt goda recensioner gällande sin service, och det är ju väldigt uppskattat!</p>
             </div>
             <div class="card">
                 <span class="emoji">🍷</span>
-                <h3>Dionysus Wine Bar</h3>
-                <p>Romantic wine bar with an extensive collection of Greek wines. Perfect for our evening dates with views of the Acropolis. Their wine tastings paired with mezze platters are incredible.</p>
+                <h3>Lush Wine and Deli</h3>
+                <p>En bit in på smågatorna finner vi denna fantastiska pärla. En vinbar! Med ost, kallskuret och enligt bilderna en otrolig deli-macka!? WOW</p>
+            </div>
+            <div class="card">
+                <span class="emoji">🍖</span>
+                <h3>Steak House Sivota</h3>
+                <p>På smågatorna i Sivota hittar vi ett riktigt STEAKHOUSE! Som har vunnit "Greek Awards 2020"! Låter helt otroligt! Men vad betyder det? Vi vet inte ännu! EN sak som är säker är att här kan man få sig en rejäl köttbit med sås! Mums</p>
             </div>
         </div>
     </section>
@@ -560,6 +623,8 @@
                 <p class="modal-subtitle" id="modal-subtitle">Subtitle</p>
             </div>
             <div class="modal-body">
+                <img id="modal-main-image" class="modal-image" style="display: none;" alt="Restaurant/Location Image" height="">
+                <div id="modal-image-gallery" class="modal-image-gallery" style="display: none;"></div>
                 <p id="modal-description">Description</p>
                 <div class="modal-details" id="modal-details">
                     <p id="modal-extra">Extra details</p>
@@ -575,48 +640,85 @@
     <script>
         // Modal data
         const modalData = {
-            'Taverna Ouzeri': {
+            'Vibes All Day Dining Experience': {
                 emoji: '🐙',
-                title: 'Taverna Ouzeri',
-                subtitle: 'Authentic Seaside Dining Experience',
-                description: 'Authentic Greek seafood overlooking the Aegean Sea. Famous for their grilled octopus and fresh fish caught daily by local fishermen. The sunset views from their terrace are absolutely magical.',
-                details: '📍 Located on the waterfront of Paros island<br>🕐 Open daily 6 PM - 1 AM<br>💰 €25-40 per person<br>🍷 Extensive wine list featuring local varieties<br>📞 Reservations recommended for sunset tables',
-                mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3169.123!2d25.148!3d37.0853!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDA1JzA3LjEiTiAyNcKwMDgnNTIuOCJF!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',
-                menuUrl: 'https://www.example-taverna-ouzeri.gr/menu',
+                title: 'Vibes All Day Dining Experience',
+                subtitle: 'Belägen vid norra sidan av hamnen hittar vi denna pärla med "vibes all day"',
+                description: 'Our goal at Vibes is to provide you with the best tasting quality throughout the day with the most carefully selected materials. Rich choices of breakfast, smoothies and a fine blend of coffee. We continue with a variety of brunch options, special salads and homemade pancakes. A unique selection of fine wines, signature cocktails and fine dinner options can also be enjoyed by the sea.',
+                details: '📍 Beläget vid norra hamnen i Sivota<br>🕐 Öppet hela dagarna enligt tripadvisor!<br>💰 Dyrt, över 20€ för många rätter!<br>📞 +30 2645 031944',
+                mainImage: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/18/c6/5a/87/vibes-all-day-dinning.jpg?w=900&h=-1&s=1',
+                images: [
+                    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2a/50/26/c4/caption.jpg?w=1000&h=-1&s=1',
+                    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2a/50/26/c1/caption.jpg?w=1000&h=-1&s=1',
+                    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1d/fe/b9/3a/caption.jpg?w=1000&h=-1&s=1'
+                ],
+                mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d194.8154176807701!2d20.68258055869229!3d38.62480710394652!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x135db7c09f1581ef%3A0xa3346f4cc3bbe149!2sVibes%20Mediterranean%20Gastro%20%26%20Cocktails!5e0!3m2!1sen!2sse!4v1749240300592!5m2!1sen!2sse',
+                menuUrl: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/29/ee/d1/a2/caption.jpg?w=1000&h=-1&s=1',
                 directionsUrl: 'https://maps.google.com/maps?daddr=37.0853,25.148',
                 type: 'restaurant'
             },
-            'Souvlaki Paradise': {
-                emoji: '🥙',
-                title: 'Souvlaki Paradise',
-                subtitle: 'Three Generations of Authentic Flavors',
-                description: 'The best souvlaki in Athens! This family-run taverna has been serving traditional Greek wraps for three generations. Don\'t miss their lamb souvlaki with tzatziki and warm pita.',
-                details: '📍 Psyrri neighborhood, Athens<br>🕐 Open daily 12 PM - 11 PM<br>💰 €8-15 per person<br>🥩 Fresh meat grilled over charcoal<br>👨‍👩‍👧‍👦 Family recipe passed down since 1952',
-                mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3145.678!2d23.7348!3d37.9755!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDU4JzMxLjgiTiAyM8KwNDQnMDUuMyJF!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',
-                menuUrl: 'https://www.example-souvlaki-paradise.gr/menu',
+            'Sivota Bakery': {
+                emoji: '🥐',
+                title: 'Sivota Bakery',
+                subtitle: 'Detta otroligt mysiga café ligger vid västra delen av hamnen, här kan en nybakt croissant avnjutas med en oslagbar utsikt över marinan och inloppet.',
+                description: 'All Day Restaurant with bakery in Beautiful Sivota of Lefkada.',
+                details: '📍 Västra hamnen<br>🕐 Öppet varje dag mellan 09 - 23 enligt tripadvisor, hmm..<br>💰 €9 för eggs benedict, wow!',
+                mainImage: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2e/98/ce/d6/breakfast-at-sivota-bakery.jpg?w=1000&h=-1&s=1',
+                images: [
+                    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2c/73/f3/e0/caption.jpg?w=1000&h=-1&s=1',
+                    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/28/fd/d2/ec/ice-lattes.jpg?w=800&h=-1&s=1',
+                    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/30/11/73/e8/caption.jpg?w=1000&h=-1&s=1'
+                ],
+                mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d463.3638537928366!2d20.681881260452723!3d38.62293565316641!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x135db7bc09062a05%3A0x5ece851527a558e!2sSivota%20Bakery%20Cafe%20-%20Kitchen%20%26%20Bar!5e0!3m2!1sen!2sse!4v1749240883050!5m2!1sen!2sse',
+                menuUrl: 'https://www.sivotabakerycafe.com/menus',
                 directionsUrl: 'https://maps.google.com/maps?daddr=37.9755,23.7348',
                 type: 'restaurant'
             },
-            'Feta & Honey': {
-                emoji: '🧀',
-                title: 'Feta & Honey',
-                subtitle: 'Rooftop Cheese & Wine Paradise',
-                description: 'A charming rooftop restaurant specializing in traditional Greek cheeses and local honey. Their feta saganaki with thyme honey is a must-try, paired with local wine.',
-                details: '📍 Rooftop terrace in Plaka, Athens<br>🕐 Open daily 7 PM - 2 AM<br>💰 €20-35 per person<br>🧀 Over 15 varieties of Greek cheese<br>🍯 Honey sourced from local beekeepers',
-                mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3145.234!2d23.7275!3d37.9723!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDU4JzIwLjMiTiAyM8KwNDMnMzkuMCJF!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',
-                menuUrl: 'https://www.example-feta-honey.gr/menu',
-                directionsUrl: 'https://maps.google.com/maps?daddr=37.9723,23.7275',
+            'Ionion Taverna': {
+                emoji: '🦐',
+                title: 'Ionion Taverna',
+                subtitle: 'Ännu en spännande restaurang vid den pittoreska hamnen! Den här restaurangen har fått väldigt goda recensioner gällande sin service, och det är ju väldigt uppskattat!',
+                description: 'We are pleased to welcome you to our family restaurant, continuing the 25 year tradition and experience of being chef on merchant ships sailing all over the world. Since we started this place in 1982, our aim has always been to provide the best homemade dishes, created with care and respect; so that all our guests may enjoy their meals in a relaxed and friendly atmosphere as defined by the Greek spirit of hospitality through the centuries. Every day our fishing boats bring in the best fresh fish and seafood, completing our menu with the finest meat and Greek dishes. Welcome and enjoy your stay, from Yanni & Aleks, Nicko & Toula.',
+                details: '📍 Norra hamen <br>🕐 Öppet heeeela dagarna står det<br>',
+                mainImage: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/25/0a/b3/52/caption.jpg?w=1000&h=-1&s=1',
+                images: [
+                    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/25/17/16/8f/caption.jpg?w=1000&h=-1&s=1',
+                    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1b/f4/f3/62/20200907-154543-largejpg.jpg?w=800&h=-1&s=1',
+                    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/08/08/46/94/caption.jpg?w=1000&h=-1&s=1'
+                ],
+                mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d194.81508552415517!2d20.682728822568503!3d38.624929367100755!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x135db7b9606c5dc7%3A0x811762e877c8e837!2sTavern%20Ionion!5e0!3m2!1sen!2sse!4v1749241369672!5m2!1sen!2sse',
                 type: 'restaurant'
             },
-            'Dionysus Wine Bar': {
+            'Lush Wine and Deli': {
                 emoji: '🍷',
-                title: 'Dionysus Wine Bar',
-                subtitle: 'Romance with a View of the Acropolis',
-                description: 'Romantic wine bar with an extensive collection of Greek wines. Perfect for our evening dates with views of the Acropolis. Their wine tastings paired with mezze platters are incredible.',
-                details: '📍 Rooftop with Acropolis views<br>🕐 Open daily 6 PM - 2 AM<br>💰 €30-50 per person<br>🍷 200+ Greek wines from all regions<br>🧀 Curated mezze platters with each wine flight',
+                title: 'Lush Wine and Deli',
+                subtitle: 'En bit in på smågatorna finner vi denna fantastiska pärla. En vinbar! Med ost, kallskuret och enligt bilderna en otrolig deli-macka!? WOW',
+                description: 'Lush Wine and Deli is the premier cava and wine bar on the Ionian Coast. Experience the art of wine making and wine blending with only the finest grapes from local vineyards and wineries of Greece and over 240 well renowned wines from around the world. Pair your selection of wine with a variety of our specialty cheeses and meats found in a delicatessen corner. Choose from our eclectic sandwiches, brie with homemade chutney, our special chocolate ganache with fresh local fruit or end your evening with our luscious prosecco grapes.',
+                details: '📍 En bit i staden från västra hamnen! <br>🕐 09-01 varje dag :O<br>💰 €30-50 per person<br>🍷 200+ Greek wines from all regions<br>🧀 Curated mezze platters with each wine flight',
+                mainImage: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/29/9a/fb/4e/wide-variety-of-greek.jpg?w=1000&h=-1&s=1',
+                images: [
+                    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2a/36/9e/aa/caption.jpg?w=1000&h=-1&s=1',
+                    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/29/da/5e/07/caption.jpg?w=1000&h=-1&s=1',
+                    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/29/da/5e/0a/caption.jpg?w=1000&h=-1&s=1'
+                ],
                 mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3145.456!2d23.7291!3d37.9741!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDU4JzI2LjgiTiAyM8KwNDMnNDQuOCJF!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',
-                menuUrl: 'https://www.example-dionysus-wine.gr/menu',
-                directionsUrl: 'https://maps.google.com/maps?daddr=37.9741,23.7291',
+                menuUrl: 'https://www.lushwine.wine/',
+                type: 'restaurant'
+            },
+            'Steak House Sivota': {
+                emoji: '🍖',
+                title: 'Steak House Sivota',
+                subtitle: 'På smågatorna i Sivota hittar vi ett riktigt STEAKHOUSE! Som har vunnit "Greek Awards 2020"! Låter helt otroligt! Men vad betyder det? Vi vet inte ännu! EN sak som är säker är att här kan man få sig en rejäl köttbit med sås! Mums',
+                description: 'A traditional Greek steakhouse serving premium cuts of meat in the heart of Sivota. Winner of Greek Awards 2020 for exceptional quality and service.',
+                details: '📍 Smågatorna i Sivota<br>🕐 Open daily 6 PM - 2 AM<br>💰 €25-45 per person<br>🥩 Premium Greek beef and lamb<br>🏆 Greek Awards 2020 Winner',
+                mainImage: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0f/f7/2f/fc/steakhouse.jpg?w=1000&h=-1&s=1',
+                images: [
+                    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/25/e7/de/a3/steak-house.jpg?w=1000&h=-1&s=1',
+                    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/25/28/80/7b/caption.jpg?w=1000&h=-1&s=1',
+                    'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1d/93/be/1e/caption.jpg?w=1000&h=-1&s=1'
+                ],
+                mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d385.3432421276735!2d20.241147889496055!3d39.40725358217921!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x135c815732f98ebd%3A0xac587fcd9c9185b0!2sSteak%20House!5e0!3m2!1sen!2sse!4v1749241904564!5m2!1sen!2sse',
+                menuUrl: 'https://maps.app.goo.gl/rd9At2MV8zro6NZq7',
                 type: 'restaurant'
             },
             'Acropolis & Parthenon': {
@@ -625,8 +727,31 @@
                 subtitle: 'Ancient Wonder at Sunrise',
                 description: 'Step back in time at Athens\' crown jewel. We\'ll explore the ancient citadel at sunrise to avoid crowds and capture the golden hour magic. The history and views are breathtaking.',
                 details: '📍 Acropolis Hill, Athens<br>🕐 Opens at 8 AM (arrive early!)<br>💰 €20 entrance fee<br>📸 Best photography light at sunrise<br>🚶‍♀️ Wear comfortable shoes for marble steps',
+                mainImage: 'https://images.unsplash.com/photo-1555993539-1732b0258235?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                images: [
+                    'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    'https://images.unsplash.com/photo-1560969184-10fe8719e047?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                ],
                 mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3145.789!2d23.7275!3d37.9715!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14a1bd1f067043f1%3A0x2736354576668ddd!2sAcropolis%20of%20Athens!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',
                 directionsUrl: 'https://maps.google.com/maps?daddr=Acropolis,Athens,Greece',
+                bookingUrl: 'https://www.santorini-tours.com/sunset',
+                type: 'activity'
+            },
+            'Santorini Sunset': {
+                emoji: '🌅',
+                title: 'Santorini Sunset',
+                subtitle: 'World\'s Most Romantic Sunset',
+                description: 'The world\'s most romantic sunset in Oia. We\'ll find the perfect spot to watch the sun dip into the Aegean Sea, painting the white buildings in shades of gold and pink.',
+                details: '📍 Oia village, Santorini<br>🕐 Best viewing 7:30-8:30 PM (varies by season)<br>💰 Free viewing spots available<br>📸 Arrive 1 hour early for best spots<br>🍽️ Restaurant reservations recommended for dinner views',
+                mainImage: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                images: [
+                    'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    'https://images.unsplash.com/photo-1548013146-72479768bada?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                ],
+                mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3194.567!2d25.3747!3d36.4618!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1499ce86adfd9ff7%3A0xb2a648fcfbcf619f!2sOia!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',
+                directionsUrl: 'https://maps.google.com/maps?daddr=Oia,Santorini,Greece',
                 bookingUrl: 'https://www.santorini-tours.com/sunset',
                 type: 'activity'
             },
@@ -636,6 +761,12 @@
                 subtitle: 'Private Cyclades Adventure',
                 description: 'Private boat tour through the Cyclades islands. We\'ll discover hidden coves, swim in crystal-clear waters, and explore charming fishing villages accessible only by sea.',
                 details: '📍 Departs from Paros or Naxos<br>🕐 Full day trips 9 AM - 6 PM<br>💰 €150-200 per person<br>🏊‍♀️ Swimming stops at secluded beaches<br>🍽️ Fresh seafood lunch included',
+                mainImage: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                images: [
+                    'https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                ],
                 mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3169.123!2d25.148!3d37.0853!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDA1JzA3LjEiTiAyNcKwMDgnNTIuOCJF!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',
                 directionsUrl: 'https://maps.google.com/maps?daddr=Paros,Greece',
                 bookingUrl: 'https://www.cyclades-sailing.com/book',
@@ -647,6 +778,12 @@
                 subtitle: 'Paradise Found',
                 description: 'Relaxing on the pristine beaches of Mykonos. From the vibrant beach clubs to secluded romantic spots, we\'ll find our perfect slice of paradise.',
                 details: '📍 Paradise Beach & Psarou Beach<br>🕐 Beach clubs open 10 AM - sunset<br>💰 €20-40 for beach beds<br>🍹 Signature cocktails and fresh seafood<br>🎵 Chill music and crystal-clear waters',
+                mainImage: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                images: [
+                    'https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    'https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                ],
                 mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3182.456!2d25.3289!3d37.4467!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14a2baa179b15227%3A0x21c7bc0b5296affc!2sMykonos!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',
                 directionsUrl: 'https://maps.google.com/maps?daddr=Mykonos,Greece',
                 bookingUrl: 'https://www.mykonos-beaches.com/reserve',
@@ -658,6 +795,12 @@
                 subtitle: 'Performance Under the Stars',
                 description: 'Watch a performance at the ancient theater of Epidaurus, famous for its perfect acoustics. An unforgettable cultural experience under the Greek stars.',
                 details: '📍 Epidaurus, 2 hours from Athens<br>🕐 Performances start at 9 PM<br>💰 €15-40 per ticket<br>🎭 Classical plays in original setting<br>🌟 Perfect acoustics - whisper from stage heard in back row',
+                mainImage: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                images: [
+                    'https://images.unsplash.com/photo-1555993539-1732b0258235?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    'https://images.unsplash.com/photo-1560969184-10fe8719e047?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                ],
                 mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3156.789!2d23.0792!3d37.5963!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x149ffd5cb7f8a2f5%3A0x3c7c99a10f8c2e3a!2sAncient%20Theatre%20of%20Epidaurus!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',
                 directionsUrl: 'https://maps.google.com/maps?daddr=Ancient Theatre of Epidaurus,Greece',
                 bookingUrl: 'https://www.greekfestival.gr/epidaurus',
@@ -669,6 +812,12 @@
                 subtitle: 'Private Sailing Adventure',
                 description: 'Private sailing trip around the Greek islands. We\'ll learn to sail together, enjoy fresh seafood onboard, and anchor in secluded bays for swimming and snorkeling.',
                 details: '📍 Departs from various marinas<br>🕐 Half-day or full-day options<br>💰 €300-500 for private boat<br>⛵ Learn basic sailing techniques<br>🐠 Snorkeling equipment provided',
+                mainImage: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                images: [
+                    'https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
+                ],
                 mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3169.123!2d25.148!3d37.0853!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDA1JzA3LjEiTiAyNcKwMDgnNTIuOCJF!5e0!3m2!1sen!2s!4v1703123456789!5m2!1sen!2s',
                 directionsUrl: 'https://maps.google.com/maps?daddr=Paros,Greece',
                 bookingUrl: 'https://www.greek-sailing.com/private-tours',
@@ -687,6 +836,35 @@
                 document.getElementById('modal-subtitle').textContent = data.subtitle;
                 document.getElementById('modal-description').textContent = data.description;
                 document.getElementById('modal-extra').innerHTML = data.details;
+                
+                // Show main image
+                const mainImageElement = document.getElementById('modal-main-image');
+                if (data.mainImage) {
+                    mainImageElement.src = data.mainImage;
+                    mainImageElement.alt = data.title;
+                    mainImageElement.style.display = 'block';
+                } else {
+                    mainImageElement.style.display = 'none';
+                }
+                
+                // Show image gallery
+                const galleryElement = document.getElementById('modal-image-gallery');
+                if (data.images && data.images.length > 0) {
+                    galleryElement.innerHTML = '';
+                    data.images.forEach((imageSrc, index) => {
+                        const img = document.createElement('img');
+                        img.src = imageSrc;
+                        img.alt = `${data.title} - Image ${index + 1}`;
+                        img.onclick = () => {
+                            // Replace main image when gallery image is clicked
+                            mainImageElement.src = imageSrc;
+                        };
+                        galleryElement.appendChild(img);
+                    });
+                    galleryElement.style.display = 'grid';
+                } else {
+                    galleryElement.style.display = 'none';
+                }
                 
                 // Show map
                 const mapElement = document.getElementById('modal-map');
@@ -717,16 +895,6 @@
                     actionsContainer.appendChild(bookingButton);
                 }
                 
-                // Add directions button for all
-                if (data.directionsUrl) {
-                    const directionsButton = document.createElement('a');
-                    directionsButton.href = data.directionsUrl;
-                    directionsButton.target = '_blank';
-                    directionsButton.className = 'modal-button directions-button';
-                    directionsButton.innerHTML = '🧭 Get Directions';
-                    actionsContainer.appendChild(directionsButton);
-                }
-                
                 modal.classList.add('show');
                 document.body.style.overflow = 'hidden';
             }
@@ -741,6 +909,13 @@
             const mapElement = document.getElementById('modal-map');
             mapElement.src = '';
             mapElement.style.display = 'none';
+            
+            // Clear images
+            const mainImageElement = document.getElementById('modal-main-image');
+            mainImageElement.style.display = 'none';
+            
+            const galleryElement = document.getElementById('modal-image-gallery');
+            galleryElement.style.display = 'none';
         }
 
         // Close modal when clicking outside
